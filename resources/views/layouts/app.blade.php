@@ -411,6 +411,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('masters.*') ? 'active' : '' }}" href="{{ route('masters.index') }}">
+                        <i class="bi bi-sliders"></i> Garment Masters
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('app-test.*') ? 'active' : '' }}" href="{{ route('app-test.index') }}">
                         <i class="bi bi-tablet-landscape"></i> App Test (Catalog)
                     </a>
@@ -492,24 +497,10 @@
                 </li>
             </ul>
 
-            <!-- 4. MASTERS & ADVANCED DASHBOARDS -->
-            <div class="sidebar-section-title">4. System Masters & Analytics</div>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('masters.*') ? 'active' : '' }}" href="{{ route('masters.index') }}">
-                        <i class="bi bi-sliders"></i> Garment Masters
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('department-dashboard.*') ? 'active' : '' }}" href="{{ route('department-dashboard.index') }}">
-                        <i class="bi bi-graph-up-arrow"></i> Department Dashboard
-                    </a>
-                </li>
-            </ul>
-
-            <!-- 5. PRODUCTION SECTIONS -->
-            <div class="sidebar-section-title">5. Production Sections</div>
+            <!-- 4. PRODUCTION SECTIONS -->
+            <div class="sidebar-section-title">4. Production Sections</div>
             <ul class="nav flex-column mb-3">
+
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('production.cutting') ? 'active' : '' }}" href="{{ route('production.cutting') }}">
                         <i class="bi bi-scissors"></i> Cutting
