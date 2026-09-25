@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/app-test', [TrackTechAppController::class, 'index'])->name('app-test.index');
+
 
     // Stage 1 & 2: Buyer Orders & Sales Orders (ERP Entry)
     Route::get('/buyer-orders', [OrderController::class, 'buyerOrders'])->name('buyer-orders.index');

@@ -415,12 +415,8 @@
                         <i class="bi bi-sliders"></i> Garment Masters
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('app-test.*') ? 'active' : '' }}" href="{{ route('app-test.index') }}">
-                        <i class="bi bi-tablet-landscape"></i> App Test (Catalog)
-                    </a>
-                </li>
             </ul>
+
 
             <!-- 1. ORDER & PLANNING -->
             <div class="sidebar-section-title">1. Order & Planning</div>

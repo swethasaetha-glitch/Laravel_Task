@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\TrackTechApp;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -24,24 +23,9 @@ class TrackTechAppTest extends TestCase
         ]);
     }
 
-    public function test_can_view_app_test_catalog(): void
+    public function test_app_test_catalog_route_removed(): void
     {
-        TrackTechApp::create([
-            'sno' => 1,
-            'app_name' => 'Layman',
-            'package_name' => 'layman',
-            'live_version' => '2.0.1',
-            'test_version' => '2.0.2',
-            'status' => 'ONLINE',
-        ]);
-
         $response = $this->actingAs($this->user)->get('/app-test');
-
-        $response->assertStatus(200);
-        $response->assertSee('APP TEST');
-        $response->assertSee('Layman');
-        $response->assertSee('layman');
-        $response->assertSee('2.0.1');
-        $response->assertSee('2.0.2');
+        $response->assertStatus(404);
     }
 }
