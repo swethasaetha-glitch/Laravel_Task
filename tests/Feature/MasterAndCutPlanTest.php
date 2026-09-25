@@ -90,14 +90,28 @@ class MasterAndCutPlanTest extends TestCase
         $this->assertDatabaseHas('cut_plans', ['no_of_piles' => 120, 'cut_plan_type' => 'step_down']);
     }
 
-    public function test_user_can_view_department_dashboard()
+    public function test_user_can_start_cut_order_from_modal()
     {
         $user = User::first();
+        $so = SalesOrder::first();
+        $fab = Fabric::first();
 
-        $response = $this->actingAs($user)->get(route('department-dashboard.index'));
-
+        $response = $this->actingAs($user)->get(route('production.cutting'));
         $response->assertStatus(200);
-        $response->assertSee('Department-Wise & Machine-Wise Dashboard', false);
+        $response->assertSee('Start New Cut Order');
+
+        $response = $this->actingAs($user)->post(route('production.cutting.store'), [
+            'sales_order_id' => $so->id,
+            'fabric_id' => $fab->id,
+            'table_no' => 'Table 01 (Auto Spreader)',
+            'cutting_method' => 'Gerber Auto Cutter',
+            'no_of_piles' => 150,
+            'extra_qty' => 30,
+        ]);
+
+        $response->assertRedirect(route('production.cutting'));
+        $this->assertDatabaseHas('cut_plans', ['no_of_piles' => 150]);
     }
 }
+
 

@@ -3,6 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProductionBundle;
+use App\Models\CutPlan;
+use App\Models\LaySlip;
+use App\Models\LotBundle;
+use App\Models\Machine;
+use App\Models\Operator;
+use App\Models\Supervisor;
+use App\Models\SalesOrder;
+use App\Models\Fabric;
 use Illuminate\Http\Request;
 
 class ProductionController extends Controller
@@ -85,7 +93,78 @@ class ProductionController extends Controller
 
     public function cutting()
     {
-        return view('production.cutting');
+        $cutPlans = CutPlan::with('salesOrder', 'fabric', 'lotBundles')->latest()->get();
+        $laySlips = LaySlip::with('productionPlan', 'layModel', 'fabricGroup')->latest()->get();
+        $lotBundles = LotBundle::with('cutPlan', 'style', 'operator', 'supervisor', 'machine')->latest()->get();
+        $cuttingMachines = Machine::where('department', 'Cutting')->orWhere('machine_type', 'like', '%Cut%')->get();
+        $operators = Operator::all();
+        $supervisors = Supervisor::all();
+        $salesOrders = SalesOrder::all();
+        $fabrics = Fabric::all();
+
+        return view('production.cutting', compact(
+            'cutPlans',
+            'laySlips',
+            'lotBundles',
+            'cuttingMachines',
+            'operators',
+            'supervisors',
+            'salesOrders',
+            'fabrics'
+        ));
+    }
+
+    public function storeCutOrder(Request $request)
+    {
+        $validated = $request->validate([
+            'sales_order_id' => 'required|exists:sales_orders,id',
+            'fabric_id' => 'required|exists:fabrics,id',
+            'machine_id' => 'nullable|exists:machines,id',
+            'operator_id' => 'nullable|exists:operators,id',
+            'supervisor_id' => 'nullable|exists:supervisors,id',
+            'table_no' => 'required|string',
+            'cutting_method' => 'required|string', // Straight Knife, Band Knife, Gerber Auto Cutter, Manual
+            'no_of_piles' => 'required|integer|min:1',
+            'extra_qty' => 'required|integer|min:0',
+        ]);
+
+        $so = SalesOrder::find($validated['sales_order_id']);
+        $cutPlanNo = 'CP-' . date('Y') . '-' . str_pad(CutPlan::count() + 1, 3, '0', STR_PAD_LEFT);
+
+        $cutPlan = CutPlan::create([
+            'cut_plan_no' => $cutPlanNo,
+            'sales_order_id' => $so->id,
+            'fabric_id' => $validated['fabric_id'],
+            'cad_type' => 'Marker',
+            'unit_of_measure' => 'Metres',
+            'no_of_piles' => $validated['no_of_piles'],
+            'size_breakup' => ['S' => 250, 'M' => 500, 'L' => 500, 'XL' => 250],
+            'order_qty' => $so->order_qty,
+            'extra_qty' => $validated['extra_qty'],
+            'cut_plan_type' => 'selected_ratio',
+            'group_allocation' => 'automatic',
+            'status' => 'in_cutting',
+        ]);
+
+        // Generate Lot Bundles with QR codes for Cutting Floor
+        foreach (['S', 'M', 'L', 'XL'] as $size) {
+            $bundleNo = 'BND-' . $cutPlan->cut_plan_no . '-' . $size;
+            LotBundle::create([
+                'bundle_no' => $bundleNo,
+                'qr_code_hash' => 'QR-HASH-' . md5($bundleNo . time()),
+                'cut_plan_id' => $cutPlan->id,
+                'size' => $size,
+                'shade_group' => 'Shade A',
+                'garment_qty' => 25,
+                'operator_id' => $validated['operator_id'] ?? null,
+                'supervisor_id' => $validated['supervisor_id'] ?? null,
+                'machine_id' => $validated['machine_id'] ?? null,
+                'stage' => 'cutting_completed',
+            ]);
+        }
+
+        return redirect()->route('production.cutting')
+            ->with('success', 'Cutting order started successfully on ' . $validated['table_no'] . ' with QR bundle tickets generated.');
     }
 
     public function sewing()
