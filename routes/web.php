@@ -76,4 +76,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/production/sewing', [ProductionController::class, 'sewing'])->name('production.sewing');
     Route::get('/production/quality', [ProductionController::class, 'quality'])->name('production.quality');
     Route::get('/production/packing', [ProductionController::class, 'packing'])->name('production.packing');
+
+    // Garment Masters & Process Sequences
+    Route::get('/masters', [\App\Http\Controllers\MasterController::class, 'index'])->name('masters.index');
+    Route::post('/masters/styles', [\App\Http\Controllers\MasterController::class, 'storeStyle'])->name('masters.styles.store');
+    Route::post('/masters/machines', [\App\Http\Controllers\MasterController::class, 'storeMachine'])->name('masters.machines.store');
+    Route::post('/masters/operators', [\App\Http\Controllers\MasterController::class, 'storeOperator'])->name('masters.operators.store');
+    Route::post('/masters/supervisors', [\App\Http\Controllers\MasterController::class, 'storeSupervisor'])->name('masters.supervisors.store');
+    Route::post('/masters/defects', [\App\Http\Controllers\MasterController::class, 'storeDefect'])->name('masters.defects.store');
+    Route::post('/masters/shades', [\App\Http\Controllers\MasterController::class, 'storeShade'])->name('masters.shades.store');
+
+    // Cut Room Planning & Settings
+    Route::get('/cut-planning', [\App\Http\Controllers\CutRoomPlannerController::class, 'index'])->name('cut-planning.index');
+    Route::post('/cut-planning', [\App\Http\Controllers\CutRoomPlannerController::class, 'store'])->name('cut-planning.store');
+
+    // Department-Wise & Machine-Wise Live Dashboard
+    Route::get('/department-dashboard', [\App\Http\Controllers\DepartmentDashboardController::class, 'index'])->name('department-dashboard.index');
 });
+

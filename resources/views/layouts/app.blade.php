@@ -476,6 +476,11 @@
             <div class="sidebar-section-title">3. Cut Room & Lay</div>
             <ul class="nav flex-column">
                 <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('cut-planning.*') ? 'active' : '' }}" href="{{ route('cut-planning.index') }}">
+                        <i class="bi bi-rulers"></i> Cut Room Planner
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('lay-models.*') ? 'active' : '' }}" href="{{ route('lay-models.index') }}">
                         <i class="bi bi-bounding-box"></i> Lay Models
                     </a>
@@ -487,8 +492,23 @@
                 </li>
             </ul>
 
-            <!-- 4. PRODUCTION SECTIONS -->
-            <div class="sidebar-section-title">4. Production Sections</div>
+            <!-- 4. MASTERS & ADVANCED DASHBOARDS -->
+            <div class="sidebar-section-title">4. System Masters & Analytics</div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('masters.*') ? 'active' : '' }}" href="{{ route('masters.index') }}">
+                        <i class="bi bi-sliders"></i> Garment Masters
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('department-dashboard.*') ? 'active' : '' }}" href="{{ route('department-dashboard.index') }}">
+                        <i class="bi bi-graph-up-arrow"></i> Department Dashboard
+                    </a>
+                </li>
+            </ul>
+
+            <!-- 5. PRODUCTION SECTIONS -->
+            <div class="sidebar-section-title">5. Production Sections</div>
             <ul class="nav flex-column mb-3">
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('production.cutting') ? 'active' : '' }}" href="{{ route('production.cutting') }}">
@@ -512,6 +532,7 @@
                 </li>
             </ul>
         </div>
+
 
         <!-- User Profile & Logout Footer (Fixed Bottom) -->
         <div class="sidebar-user-footer">

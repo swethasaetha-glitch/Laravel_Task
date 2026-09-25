@@ -294,5 +294,177 @@ class DatabaseSeeder extends Seeder
                 ]
             );
         }
+
+        // 12. Garment Masters Data
+        $style1 = \App\Models\Style::updateOrCreate(
+            ['style_no' => 'ST-789'],
+            [
+                'style_name' => 'Men Cotton Polo',
+                'buyer_order_id' => $buyerOrder->id,
+                'garment_type' => 'Shirts',
+                'sam' => 22.50,
+                'description' => 'Premium combed cotton polo with rib collar.',
+                'status' => 'active',
+            ]
+        );
+
+        $sequences = [
+            ['sequence_order' => 1, 'process_name' => 'Fabric Receiving & GRN', 'department' => 'Fabric', 'sam' => 2.0],
+            ['sequence_order' => 2, 'process_name' => 'Fabric Relaxation', 'department' => 'Fabric', 'sam' => 1.5],
+            ['sequence_order' => 3, 'process_name' => 'CAD Marker & Lay Plan', 'department' => 'CAD', 'sam' => 3.0],
+            ['sequence_order' => 4, 'process_name' => 'Fabric Laying & Cutting', 'department' => 'Cutting', 'sam' => 4.0],
+            ['sequence_order' => 5, 'process_name' => 'Numbering & Bundle QR', 'department' => 'Cutting', 'sam' => 2.0],
+            ['sequence_order' => 6, 'process_name' => 'Sew In Terminal Scan', 'department' => 'Sewing', 'sam' => 1.0],
+            ['sequence_order' => 7, 'process_name' => 'Assembly & Mid Line QC', 'department' => 'Sewing', 'sam' => 6.0],
+            ['sequence_order' => 8, 'process_name' => 'Sew Out Scan', 'department' => 'Sewing', 'sam' => 1.0],
+            ['sequence_order' => 9, 'process_name' => 'Washing / Laundry Process', 'department' => 'Washing', 'sam' => 1.5],
+            ['sequence_order' => 10, 'process_name' => 'Finishing & Final Quality', 'department' => 'Finishing', 'sam' => 0.5],
+        ];
+
+        foreach ($sequences as $seq) {
+            \App\Models\ProcessSequence::updateOrCreate(
+                ['style_id' => $style1->id, 'sequence_order' => $seq['sequence_order']],
+                $seq
+            );
+        }
+
+        $m1 = \App\Models\Machine::updateOrCreate(
+            ['machine_no' => 'MC-CUT-01'],
+            ['machine_name' => 'Gerber Auto Cutter 01', 'machine_type' => 'Auto Cutter', 'department' => 'Cutting', 'line_no' => 'Cut Line 1', 'status' => 'active']
+        );
+        $m2 = \App\Models\Machine::updateOrCreate(
+            ['machine_no' => 'MC-SEW-101'],
+            ['machine_name' => 'Juki Single Needle 101', 'machine_type' => 'Single Needle', 'department' => 'Sewing', 'line_no' => 'Line 1', 'status' => 'active']
+        );
+        $m3 = \App\Models\Machine::updateOrCreate(
+            ['machine_no' => 'MC-WASH-01'],
+            ['machine_name' => 'Industrial Washing Drum 01', 'machine_type' => 'Washing Drum', 'department' => 'Washing', 'line_no' => 'Laundry Line', 'status' => 'active']
+        );
+
+        $op1 = \App\Models\Operator::updateOrCreate(
+            ['operator_code' => 'OP-1001'],
+            ['name' => 'Karthik Kumar', 'department' => 'Cutting', 'skill_level' => 'Grade A', 'line_no' => 'Cut Line 1', 'status' => 'active']
+        );
+        $op2 = \App\Models\Operator::updateOrCreate(
+            ['operator_code' => 'OP-1002'],
+            ['name' => 'Priya Ramesh', 'department' => 'Sewing', 'skill_level' => 'Grade A', 'line_no' => 'Line 1', 'status' => 'active']
+        );
+
+        $sup1 = \App\Models\Supervisor::updateOrCreate(
+            ['supervisor_code' => 'SUP-501'],
+            ['name' => 'Murugan V', 'department' => 'Sewing', 'shift' => 'Day']
+        );
+
+        $defects = [
+            ['defect_code' => 'DEF-01', 'defect_name' => 'Skipped Stitch', 'category' => 'Sewing', 'severity' => 'major'],
+            ['defect_code' => 'DEF-02', 'defect_name' => 'Shade Variation', 'category' => 'Fabric', 'severity' => 'critical'],
+            ['defect_code' => 'DEF-03', 'defect_name' => 'Oil Stain', 'category' => 'Washing', 'severity' => 'minor'],
+            ['defect_code' => 'DEF-04', 'defect_name' => 'Notch Missed', 'category' => 'Cutting', 'severity' => 'major'],
+        ];
+        foreach ($defects as $def) {
+            \App\Models\GarmentDefect::updateOrCreate(['defect_code' => $def['defect_code']], $def);
+        }
+
+        \App\Models\Shade::updateOrCreate(
+            ['shade_code' => 'SH-A1'],
+            ['shade_group' => 'Shade A', 'allowance_min' => 0.60, 'allowance_max' => 0.70, 'description' => 'Standard Shade A tolerance']
+        );
+
+        // 13. Tapper Report & Roll Reservations
+        \App\Models\TapperReport::updateOrCreate(
+            ['tapper_no' => 'TPR-2026-001'],
+            [
+                'fabric_id' => $fab1->id,
+                'roll_no' => 'R-GRN-2026-001-01',
+                'before_shrinkage_len' => 100.00,
+                'before_shrinkage_width' => 72.00,
+                'after_shrinkage_len' => 98.80,
+                'after_shrinkage_width' => 71.10,
+                'shrinkage_percent' => 1.20,
+                'shade_group' => 'Shade A',
+                'arvind_approval_status' => 'Approved',
+                'allowance_value' => 0.70,
+                'quality_notes' => 'Passed tapper test with 0.70 allowance limit.',
+            ]
+        );
+
+        \App\Models\FabricRollReservation::updateOrCreate(
+            ['reservation_no' => 'RES-2026-001'],
+            [
+                'fabric_roll_id' => $roll1->id,
+                'requested_by_dept' => 'Cutting Room',
+                'status' => 'reserved',
+                'storage_location' => 'BIN-A12',
+            ]
+        );
+
+        // 14. Cut Plan & Lot Bundles
+        $cutPlan = \App\Models\CutPlan::updateOrCreate(
+            ['cut_plan_no' => 'CP-2026-001'],
+            [
+                'sales_order_id' => $salesOrder->id,
+                'fabric_id' => $fab1->id,
+                'cad_type' => 'Marker',
+                'unit_of_measure' => 'Metres',
+                'no_of_piles' => 100,
+                'size_breakup' => ['S' => 250, 'M' => 500, 'L' => 500, 'XL' => 250],
+                'order_qty' => 1500,
+                'extra_qty' => 50,
+                'cut_plan_type' => 'selected_ratio',
+                'group_allocation' => 'automatic',
+                'status' => 'in_cutting',
+            ]
+        );
+
+        $bundle = \App\Models\LotBundle::updateOrCreate(
+            ['bundle_no' => 'LOT-BND-1001'],
+            [
+                'qr_code_hash' => 'QR-HASH-ST789-L-001',
+                'cut_plan_id' => $cutPlan->id,
+                'lay_slip_id' => null,
+                'style_id' => $style1->id,
+                'size' => 'L',
+                'shade_group' => 'Shade A',
+                'garment_qty' => 20,
+                'operator_id' => $op1->id,
+                'supervisor_id' => $sup1->id,
+                'machine_id' => $m1->id,
+                'stage' => 'sew_in',
+            ]
+        );
+
+        \App\Models\SewingMachineScan::updateOrCreate(
+            ['lot_bundle_id' => $bundle->id, 'scan_type' => 'in_scan'],
+            [
+                'machine_id' => $m2->id,
+                'operator_id' => $op2->id,
+                'department' => 'Sewing',
+                'scanned_at' => now(),
+            ]
+        );
+
+        \App\Models\LaundryRecord::updateOrCreate(
+            ['wash_batch_no' => 'WASH-2026-001'],
+            [
+                'lot_bundle_id' => $bundle->id,
+                'wash_type' => 'Enzyme Softener Wash',
+                'status' => 'in_washing',
+                'received_at' => now(),
+            ]
+        );
+
+        \App\Models\QualityDashboardAudit::updateOrCreate(
+            ['lot_bundle_id' => $bundle->id],
+            [
+                'garment_defect_id' => null,
+                'operator_id' => $op2->id,
+                'machine_id' => $m2->id,
+                'department' => 'Sewing',
+                'defect_count' => 0,
+                'audit_result' => 'pass',
+                'remarks' => 'First inspection passed cleanly.',
+            ]
+        );
+
     }
 }

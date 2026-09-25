@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Operator extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'operator_code',
+        'name',
+        'department',
+        'skill_level',
+        'line_no',
+        'status',
+    ];
+}
