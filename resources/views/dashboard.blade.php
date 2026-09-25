@@ -10,100 +10,127 @@
     <div class="col-md-3">
         <div class="metric-card">
             <div class="metric-card-label">Buyer & Sales Orders</div>
-            <div class="metric-card-value">{{ \App\Models\SalesOrder::count() }}</div>
+            <div class="metric-card-value text-primary">{{ \App\Models\SalesOrder::count() }}</div>
             <div class="metric-card-subtext">Active sales orders</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="metric-card">
             <div class="metric-card-label">Total Fabrics</div>
-            <div class="metric-card-value">{{ $totalFabrics }}</div>
+            <div class="metric-card-value text-info">{{ $totalFabrics }}</div>
             <div class="metric-card-subtext">Fabrics in master catalog</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="metric-card">
             <div class="metric-card-label">Fabric Rolls (Store)</div>
-            <div class="metric-card-value">{{ \App\Models\FabricRoll::count() }}</div>
+            <div class="metric-card-value text-success">{{ \App\Models\FabricRoll::count() }}</div>
             <div class="metric-card-subtext">Received & inspected rolls</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="metric-card">
             <div class="metric-card-label">Completed Lay Slips</div>
-            <div class="metric-card-value">{{ \App\Models\LaySlip::count() }}</div>
+            <div class="metric-card-value text-warning">{{ \App\Models\LaySlip::count() }}</div>
             <div class="metric-card-subtext">Lay process completed</div>
         </div>
     </div>
 </div>
 
-<!-- Integrated Live Production Working Process Stages -->
-<div class="card-custom mb-4">
-    <div class="card-custom-body">
-        <div class="d-flex justify-content-between items-center mb-3">
-            <div>
-                <h5 class="card-custom-title">Live Working Process (Stage Wise)</h5>
-                <p class="card-custom-subtitle mb-0">Active garment lot bundles across manufacturing departments</p>
-            </div>
-            <span class="badge bg-success px-3 py-2 text-uppercase font-bold">
-                <i class="bi bi-circle-fill text-white me-1" style="font-size:0.6rem;"></i> Live System Tracking
-            </span>
-        </div>
-
-        <div class="row g-3 text-center">
-            @foreach($stageCounts as $stage => $count)
-            <div class="col-6 col-md-3 col-lg">
-                <div class="p-3 bg-slate-900 text-white rounded-3 border border-slate-700 h-100 shadow-sm">
-                    <p class="text-uppercase text-muted fw-bold mb-1" style="font-size:0.68rem; letter-spacing:0.05em;">{{ $stage }}</p>
-                    <h3 class="fw-extrabold text-primary mb-1">{{ $count }}</h3>
-                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size:0.65rem;">Active Bundles</span>
+<!-- Department-Wise Production & Machine Throughput Graphs (Chart.js) -->
+<div class="row g-3 mb-4">
+    <!-- Graph 1: Department-Wise Working Process Bar Chart -->
+    <div class="col-lg-7">
+        <div class="card-custom h-100">
+            <div class="card-custom-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="card-custom-title mb-0">Department-Wise Working Process Graph</h5>
+                        <p class="card-custom-subtitle mb-0">Active Lot Bundles distribution across factory departments</p>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Real-Time Data</span>
+                </div>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="deptWorkProcessChart"></canvas>
                 </div>
             </div>
-            @endforeach
+        </div>
+    </div>
+
+    <!-- Graph 2: Department Stage Ratio Doughnut Chart -->
+    <div class="col-lg-5">
+        <div class="card-custom h-100">
+            <div class="card-custom-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="card-custom-title mb-0">Production Stage Breakdown</h5>
+                        <p class="card-custom-subtitle mb-0">Share of WIP bundles by stage</p>
+                    </div>
+                </div>
+                <div style="position: relative; height: 300px;" class="d-flex align-items-center justify-content-center">
+                    <canvas id="deptRatioChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Machine In-Scan & Out-Scan Daily Table -->
-<div class="card-custom mb-4">
-    <div class="card-custom-body">
-        <h5 class="card-custom-title">Department-Wise & Machine-Wise Scan Tracking (Today)</h5>
-        <p class="card-custom-subtitle">Real-time daily In-Scan vs Out-Scan throughput per sewing/cutting machine line</p>
+<!-- Machine In-Scan & Out-Scan Daily Table and Graph -->
+<div class="row g-3 mb-4">
+    <!-- Machine Scan Comparison Bar Chart -->
+    <div class="col-lg-6">
+        <div class="card-custom h-100">
+            <div class="card-custom-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="card-custom-title mb-0">Machine In-Scan vs Out-Scan Graph (Today)</h5>
+                        <p class="card-custom-subtitle mb-0">Machine throughput comparison</p>
+                    </div>
+                </div>
+                <div style="position: relative; height: 260px;">
+                    <canvas id="machineScanChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <div class="table-responsive">
-            <table class="table table-custom align-middle">
-                <thead>
-                    <tr>
-                        <th>Machine No</th>
-                        <th>Name</th>
-                        <th>Department</th>
-                        <th>Line No</th>
-                        <th class="text-center">In-Scan Today</th>
-                        <th class="text-center">Out-Scan Today</th>
-                        <th class="text-center">Efficiency Rate</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($machines as $mc)
-                    <tr>
-                        <td class="fw-bold text-primary">{{ $mc->machine_no }}</td>
-                        <td class="fw-semibold text-dark">{{ $mc->machine_name }}</td>
-                        <td><span class="badge bg-secondary text-uppercase" style="font-size:0.68rem;">{{ $mc->department }}</span></td>
-                        <td class="text-muted">{{ $mc->line_no ?? 'Line 1' }}</td>
-                        <td class="text-center fw-bold text-success">{{ $mc->in_scans_today }}</td>
-                        <td class="text-center fw-bold text-info">{{ $mc->out_scans_today }}</td>
-                        <td class="text-center">
-                            <span class="badge badge-active">94.5%</span>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+    <!-- Machine In-Scan & Out-Scan Table -->
+    <div class="col-lg-6">
+        <div class="card-custom h-100">
+            <div class="card-custom-body">
+                <h5 class="card-custom-title mb-0">Machine-Wise Scan Logs</h5>
+                <p class="card-custom-subtitle mb-3">Daily In-Scan / Out-Scan counts per machine line</p>
+
+                <div class="table-responsive">
+                    <table class="table table-custom align-middle">
+                        <thead>
+                            <tr>
+                                <th>Machine No</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th class="text-center">In-Scan</th>
+                                <th class="text-center">Out-Scan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($machines as $mc)
+                            <tr>
+                                <td class="fw-bold text-primary">{{ $mc->machine_no }}</td>
+                                <td class="fw-semibold text-dark">{{ $mc->machine_name }}</td>
+                                <td><span class="badge bg-secondary text-uppercase" style="font-size:0.68rem;">{{ $mc->department }}</span></td>
+                                <td class="text-center fw-bold text-success">{{ $mc->in_scans_today }}</td>
+                                <td class="text-center fw-bold text-info">{{ $mc->out_scans_today }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Quality Dashboard & Laundry Management Side-by-Side -->
+<!-- Quality Control DHU & Laundry Management Side-by-Side -->
 <div class="row g-3 mb-4">
     <!-- Quality DHU Rate -->
     <div class="col-lg-6">
@@ -111,7 +138,7 @@
             <div class="card-custom-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                        <h5 class="card-custom-title">Quality Control & DHU Rate</h5>
+                        <h5 class="card-custom-title mb-0">Quality Control & DHU Rate</h5>
                         <p class="card-custom-subtitle mb-0">Defects Per Hundred Units Audit</p>
                     </div>
                     <span class="badge bg-danger fs-6 px-3 py-2">
@@ -153,8 +180,8 @@
     <div class="col-lg-6">
         <div class="card-custom h-100">
             <div class="card-custom-body">
-                <h5 class="card-custom-title">Laundry & Washing Process</h5>
-                <p class="card-custom-subtitle">Garment wash batches and status tracking</p>
+                <h5 class="card-custom-title mb-0">Laundry & Washing Process</h5>
+                <p class="card-custom-subtitle mb-3">Garment wash batches and status tracking</p>
 
                 <div class="table-responsive">
                     <table class="table table-custom align-middle text-sm">
@@ -186,70 +213,108 @@
         </div>
     </div>
 </div>
-
-<!-- Garment Manufacturing Process Pipeline -->
-<div class="card-custom mb-4">
-    <div class="card-custom-body">
-        <h5 class="card-custom-title">Garment Manufacturing Process Sequence</h5>
-        <p class="card-custom-subtitle">Connected enterprise workflow: Buyer Order &rarr; ERP Entry &rarr; Fabric ERP & Store &rarr; Cut Room & Lay Process Completed.</p>
-
-        <div class="row g-3 py-2">
-            <!-- Stage 1 -->
-            <div class="col-md-3">
-                <div class="p-3 bg-light rounded-3 h-100 border">
-                    <span class="badge bg-primary text-uppercase mb-2">1. Order & Planning</span>
-                    <h6 class="fw-bold mt-1">Buyer Order & ERP Entry</h6>
-                    <p class="small text-muted mb-2">Buyer PO &rarr; Sales Order &rarr; Production Target Scheduling</p>
-                    <div class="d-flex flex-column gap-1">
-                        <a href="{{ route('buyer-orders.index') }}" class="btn btn-sm btn-outline-custom text-start">&bull; Buyer Orders (PO)</a>
-                        <a href="{{ route('sales-orders.index') }}" class="btn btn-sm btn-outline-custom text-start">&bull; Sales Orders (ERP)</a>
-                        <a href="{{ route('production-plans.index') }}" class="btn btn-sm btn-outline-custom text-start">&bull; Production Planning</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stage 2 -->
-            <div class="col-md-3">
-                <div class="p-3 bg-light rounded-3 h-100 border">
-                    <span class="badge bg-info text-white text-uppercase mb-2">2. Procurement & Receiving</span>
-                    <h6 class="fw-bold mt-1">Fabric PO & GRN Store</h6>
-                    <p class="small text-muted mb-2">Fabric Requirement &rarr; Procurement PO &rarr; Goods Receiving Note (GRN)</p>
-                    <div class="d-flex flex-column gap-1">
-                        <a href="{{ route('fabrics.index') }}" class="btn btn-sm btn-outline-custom text-start">&bull; Fabric Master</a>
-                        <a href="{{ route('fabric-pos.index') }}" class="btn btn-sm btn-outline-custom text-start">&bull; Fabric Procurement</a>
-                        <a href="{{ route('fabric-grns.index') }}" class="btn btn-sm btn-outline-custom text-start">&bull; Receiving & GRN</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stage 3 -->
-            <div class="col-md-3">
-                <div class="p-3 bg-light rounded-3 h-100 border">
-                    <span class="badge bg-warning text-dark text-uppercase mb-2">3. Quality & Relaxation</span>
-                    <h6 class="fw-bold mt-1">4-Point Inspection & Relaxation</h6>
-                    <p class="small text-muted mb-2">Defect Inspection &rarr; Roll Grading &rarr; Shade Grouping &rarr; 24h Relaxation</p>
-                    <div class="d-flex flex-column gap-1">
-                        <a href="{{ route('fabric-inspections.index') }}" class="btn btn-sm btn-outline-custom text-start">&bull; 4-Point Inspection</a>
-                        <a href="{{ route('fabric-relaxations.index') }}" class="btn btn-sm btn-outline-custom text-start">&bull; Fabric Relaxation</a>
-                        <a href="{{ route('fabric-groups.index') }}" class="btn btn-sm btn-outline-custom text-start">&bull; Fabric Groups (Lot)</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stage 4 -->
-            <div class="col-md-3">
-                <div class="p-3 bg-light rounded-3 h-100 border border-success">
-                    <span class="badge bg-success text-uppercase mb-2">4. Cut Room & Lay</span>
-                    <h6 class="fw-bold mt-1 text-success">Lay Planning & Completion</h6>
-                    <p class="small text-muted mb-2">Marker Specs &rarr; Table Allocation &rarr; Spreading &rarr; Lay Slip Executed</p>
-                    <div class="d-flex flex-column gap-1">
-                        <a href="{{ route('cut-planning.index') }}" class="btn btn-sm btn-outline-custom text-start">&bull; Cut Room Planner</a>
-                        <a href="{{ route('lay-models.index') }}" class="btn btn-sm btn-outline-custom text-start">&bull; Lay Models</a>
-                        <a href="{{ route('lay-slips.index') }}" class="btn btn-sm btn-primary-blue text-start">&bull; Lay Slips (Lay Completed)</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
+
+@push('scripts')
+<!-- Load Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const stageLabels = {!! json_encode(array_keys($stageCounts)) !!};
+        const stageData = {!! json_encode(array_values($stageCounts)) !!};
+
+        // 1. Department-Wise Bar Chart
+        const ctx1 = document.getElementById('deptWorkProcessChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: stageLabels,
+                datasets: [{
+                    label: 'Active Lot Bundles',
+                    data: stageData,
+                    backgroundColor: [
+                        'rgba(37, 99, 235, 0.75)',
+                        'rgba(14, 165, 233, 0.75)',
+                        'rgba(245, 158, 11, 0.75)',
+                        'rgba(16, 185, 129, 0.75)',
+                        'rgba(139, 92, 246, 0.75)',
+                        'rgba(236, 72, 153, 0.75)',
+                        'rgba(100, 116, 139, 0.75)'
+                    ],
+                    borderColor: [
+                        '#2563eb', '#0ea5e9', '#f59e0b', '#10b981', '#8b5cf6', '#ec4899', '#64748b'
+                    ],
+                    borderWidth: 1.5,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+            }
+        });
+
+        // 2. Production Stage Ratio Doughnut Chart
+        const ctx2 = document.getElementById('deptRatioChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: stageLabels,
+                datasets: [{
+                    data: stageData,
+                    backgroundColor: [
+                        '#2563eb', '#0ea5e9', '#f59e0b', '#10b981', '#8b5cf6', '#ec4899', '#64748b'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+                }
+            }
+        });
+
+        // 3. Machine In-Scan vs Out-Scan Bar Chart
+        const machineNames = {!! json_encode($machines->pluck('machine_no')) !!};
+        const inScans = {!! json_encode($machines->pluck('in_scans_today')) !!};
+        const outScans = {!! json_encode($machines->pluck('out_scans_today')) !!};
+
+        const ctx3 = document.getElementById('machineScanChart').getContext('2d');
+        new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: machineNames,
+                datasets: [
+                    {
+                        label: 'In-Scan Today',
+                        data: inScans,
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Out-Scan Today',
+                        data: outScans,
+                        backgroundColor: 'rgba(14, 165, 233, 0.8)',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+            }
+        });
+    });
+</script>
+@endpush
