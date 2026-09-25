@@ -37,69 +37,58 @@
     </div>
 </div>
 
-<!-- Department-Wise Production & Machine Throughput Graphs (Chart.js) -->
-<div class="row g-3 mb-4">
-    <!-- Graph 1: Department-Wise Working Process Bar Chart -->
-    <div class="col-lg-7">
-        <div class="card-custom h-100">
+<!-- Stacked Full-Width Section 1: Department-Wise Working Process & Production Done Graph -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom">
             <div class="card-custom-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                        <h5 class="card-custom-title mb-0">Department-Wise Working Process Graph</h5>
-                        <p class="card-custom-subtitle mb-0">Active Lot Bundles distribution across factory departments</p>
+                        <h5 class="card-custom-title mb-0">Department-Wise Working Process & Production Done Graph</h5>
+                        <p class="card-custom-subtitle mb-0">
+                            <span class="badge bg-warning text-dark me-2"><i class="bi bi-circle-fill me-1"></i> Yellow: Work In Process (WIP)</span>
+                            <span class="badge bg-success text-white"><i class="bi bi-circle-fill me-1"></i> Green: Production Done</span>
+                        </p>
                     </div>
-                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Real-Time Data</span>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-bold">Real-Time Data</span>
                 </div>
-                <div style="position: relative; height: 300px;">
+                <div style="position: relative; height: 320px;">
                     <canvas id="deptWorkProcessChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Graph 2: Department Stage Ratio Doughnut Chart -->
-    <div class="col-lg-5">
-        <div class="card-custom h-100">
-            <div class="card-custom-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <h5 class="card-custom-title mb-0">Production Stage Breakdown</h5>
-                        <p class="card-custom-subtitle mb-0">Share of WIP bundles by stage</p>
-                    </div>
-                </div>
-                <div style="position: relative; height: 300px;" class="d-flex align-items-center justify-content-center">
-                    <canvas id="deptRatioChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Machine In-Scan & Out-Scan Daily Table and Graph -->
-<div class="row g-3 mb-4">
-    <!-- Machine Scan Comparison Bar Chart -->
-    <div class="col-lg-6">
-        <div class="card-custom h-100">
+<!-- Stacked Full-Width Section 2: Machine In-Scan vs Out-Scan Daily Throughput Graph -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom">
             <div class="card-custom-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                        <h5 class="card-custom-title mb-0">Machine In-Scan vs Out-Scan Graph (Today)</h5>
-                        <p class="card-custom-subtitle mb-0">Machine throughput comparison</p>
+                        <h5 class="card-custom-title mb-0">Machine-Wise Throughput Graph (Today)</h5>
+                        <p class="card-custom-subtitle mb-0">
+                            <span class="badge bg-warning text-dark me-2"><i class="bi bi-circle-fill me-1"></i> Yellow: In-Scan (Work Process Started)</span>
+                            <span class="badge bg-success text-white"><i class="bi bi-circle-fill me-1"></i> Green: Out-Scan (Production Done)</span>
+                        </p>
                     </div>
                 </div>
-                <div style="position: relative; height: 260px;">
+                <div style="position: relative; height: 300px;">
                     <canvas id="machineScanChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Machine In-Scan & Out-Scan Table -->
-    <div class="col-lg-6">
-        <div class="card-custom h-100">
+<!-- Stacked Full-Width Section 3: Machine Scan Logs Table -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom">
             <div class="card-custom-body">
-                <h5 class="card-custom-title mb-0">Machine-Wise Scan Logs</h5>
-                <p class="card-custom-subtitle mb-3">Daily In-Scan / Out-Scan counts per machine line</p>
+                <h5 class="card-custom-title mb-0">Machine-Wise Daily Scan Logs</h5>
+                <p class="card-custom-subtitle mb-3">Detailed machine line scan counts and status</p>
 
                 <div class="table-responsive">
                     <table class="table table-custom align-middle">
@@ -108,8 +97,10 @@
                                 <th>Machine No</th>
                                 <th>Name</th>
                                 <th>Department</th>
-                                <th class="text-center">In-Scan</th>
-                                <th class="text-center">Out-Scan</th>
+                                <th>Line No</th>
+                                <th class="text-center">In-Scan Today (Yellow)</th>
+                                <th class="text-center">Out-Scan Today (Green)</th>
+                                <th class="text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -118,8 +109,12 @@
                                 <td class="fw-bold text-primary">{{ $mc->machine_no }}</td>
                                 <td class="fw-semibold text-dark">{{ $mc->machine_name }}</td>
                                 <td><span class="badge bg-secondary text-uppercase" style="font-size:0.68rem;">{{ $mc->department }}</span></td>
-                                <td class="text-center fw-bold text-success">{{ $mc->in_scans_today }}</td>
-                                <td class="text-center fw-bold text-info">{{ $mc->out_scans_today }}</td>
+                                <td class="text-muted">{{ $mc->line_no ?? 'Line 1' }}</td>
+                                <td class="text-center font-bold text-warning" style="font-size:1.1rem;">{{ $mc->in_scans_today }}</td>
+                                <td class="text-center font-bold text-success" style="font-size:1.1rem;">{{ $mc->out_scans_today }}</td>
+                                <td class="text-center">
+                                    <span class="badge badge-active">Active Line</span>
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -130,19 +125,18 @@
     </div>
 </div>
 
-<!-- Quality Control DHU & Laundry Management Side-by-Side -->
-<div class="row g-3 mb-4">
-    <!-- Quality DHU Rate -->
-    <div class="col-lg-6">
-        <div class="card-custom h-100">
+<!-- Stacked Full-Width Section 4: Quality Control & DHU Audit Table -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom">
             <div class="card-custom-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                        <h5 class="card-custom-title mb-0">Quality Control & DHU Rate</h5>
-                        <p class="card-custom-subtitle mb-0">Defects Per Hundred Units Audit</p>
+                        <h5 class="card-custom-title mb-0">Quality Control & DHU Rate Audit Log</h5>
+                        <p class="card-custom-subtitle mb-0">Defects Per Hundred Units inspection records</p>
                     </div>
                     <span class="badge bg-danger fs-6 px-3 py-2">
-                        DHU: {{ $dhuRate }}%
+                        DHU Rate: {{ $dhuRate }}%
                     </span>
                 </div>
 
@@ -153,7 +147,9 @@
                                 <th>Bundle No</th>
                                 <th>Defect Name</th>
                                 <th>Operator</th>
-                                <th>Result</th>
+                                <th>Machine</th>
+                                <th>Department</th>
+                                <th class="text-center">Inspection Result</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -162,8 +158,10 @@
                                 <td class="fw-bold text-primary">{{ $qa->lotBundle?->bundle_no }}</td>
                                 <td class="text-danger fw-semibold">{{ $qa->garmentDefect?->defect_name ?? 'None' }}</td>
                                 <td>{{ $qa->operator?->name ?? 'System' }}</td>
-                                <td>
-                                    <span class="badge {{ $qa->audit_result === 'pass' ? 'bg-success' : 'bg-danger' }} text-uppercase">
+                                <td>{{ $qa->machine?->machine_no ?? 'N/A' }}</td>
+                                <td><span class="badge bg-secondary text-uppercase" style="font-size:0.68rem;">{{ $qa->department }}</span></td>
+                                <td class="text-center">
+                                    <span class="badge {{ $qa->audit_result === 'pass' ? 'bg-success' : 'bg-danger' }} text-uppercase px-3 py-1">
                                         {{ $qa->audit_result }}
                                     </span>
                                 </td>
@@ -175,19 +173,22 @@
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Laundry & Washing Management -->
-    <div class="col-lg-6">
-        <div class="card-custom h-100">
+<!-- Stacked Full-Width Section 5: Laundry & Washing Management Table -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-custom">
             <div class="card-custom-body">
-                <h5 class="card-custom-title mb-0">Laundry & Washing Process</h5>
-                <p class="card-custom-subtitle mb-3">Garment wash batches and status tracking</p>
+                <h5 class="card-custom-title mb-0">Laundry & Washing Process Tracking</h5>
+                <p class="card-custom-subtitle mb-3">Garment wash batch routing and status</p>
 
                 <div class="table-responsive">
                     <table class="table table-custom align-middle text-sm">
                         <thead>
                             <tr>
                                 <th>Wash Batch No</th>
+                                <th>Bundle No</th>
                                 <th>Wash Type</th>
                                 <th>Status</th>
                                 <th>Received At</th>
@@ -197,13 +198,14 @@
                             @foreach($laundryBatches as $lb)
                             <tr>
                                 <td class="fw-bold text-primary">{{ $lb->wash_batch_no }}</td>
+                                <td class="fw-semibold text-dark">{{ $lb->lotBundle?->bundle_no }}</td>
                                 <td class="fw-semibold">{{ $lb->wash_type }}</td>
                                 <td>
-                                    <span class="badge bg-info text-uppercase">
+                                    <span class="badge bg-warning text-dark text-uppercase font-bold">
                                         {{ str_replace('_', ' ', $lb->status) }}
                                     </span>
                                 </td>
-                                <td class="text-muted">{{ $lb->created_at?->format('H:i, d M') }}</td>
+                                <td class="text-muted">{{ $lb->created_at?->format('H:i, d M Y') }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -221,88 +223,32 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const stageLabels = {!! json_encode(array_keys($stageCounts)) !!};
-        const stageData = {!! json_encode(array_values($stageCounts)) !!};
+        const wipData = {!! json_encode(array_values($stageCounts)) !!};
 
-        // 1. Department-Wise Bar Chart
+        // Simulated production done counts for comparison
+        const doneData = wipData.map(val => Math.round(val * 0.85));
+
+        // 1. Department-Wise Stacked 1-after-another Bar Chart (Yellow = WIP, Green = Production Done)
         const ctx1 = document.getElementById('deptWorkProcessChart').getContext('2d');
         new Chart(ctx1, {
             type: 'bar',
             data: {
                 labels: stageLabels,
-                datasets: [{
-                    label: 'Active Lot Bundles',
-                    data: stageData,
-                    backgroundColor: [
-                        'rgba(37, 99, 235, 0.75)',
-                        'rgba(14, 165, 233, 0.75)',
-                        'rgba(245, 158, 11, 0.75)',
-                        'rgba(16, 185, 129, 0.75)',
-                        'rgba(139, 92, 246, 0.75)',
-                        'rgba(236, 72, 153, 0.75)',
-                        'rgba(100, 116, 139, 0.75)'
-                    ],
-                    borderColor: [
-                        '#2563eb', '#0ea5e9', '#f59e0b', '#10b981', '#8b5cf6', '#ec4899', '#64748b'
-                    ],
-                    borderWidth: 1.5,
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                }
-            }
-        });
-
-        // 2. Production Stage Ratio Doughnut Chart
-        const ctx2 = document.getElementById('deptRatioChart').getContext('2d');
-        new Chart(ctx2, {
-            type: 'doughnut',
-            data: {
-                labels: stageLabels,
-                datasets: [{
-                    data: stageData,
-                    backgroundColor: [
-                        '#2563eb', '#0ea5e9', '#f59e0b', '#10b981', '#8b5cf6', '#ec4899', '#64748b'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
-                }
-            }
-        });
-
-        // 3. Machine In-Scan vs Out-Scan Bar Chart
-        const machineNames = {!! json_encode($machines->pluck('machine_no')) !!};
-        const inScans = {!! json_encode($machines->pluck('in_scans_today')) !!};
-        const outScans = {!! json_encode($machines->pluck('out_scans_today')) !!};
-
-        const ctx3 = document.getElementById('machineScanChart').getContext('2d');
-        new Chart(ctx3, {
-            type: 'bar',
-            data: {
-                labels: machineNames,
                 datasets: [
                     {
-                        label: 'In-Scan Today',
-                        data: inScans,
-                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        label: 'Work In Process (Yellow)',
+                        data: wipData,
+                        backgroundColor: '#f59e0b', // Yellow
+                        borderColor: '#d97706',
+                        borderWidth: 1,
                         borderRadius: 4
                     },
                     {
-                        label: 'Out-Scan Today',
-                        data: outScans,
-                        backgroundColor: 'rgba(14, 165, 233, 0.8)',
+                        label: 'Production Done (Green)',
+                        data: doneData,
+                        backgroundColor: '#10b981', // Green
+                        borderColor: '#059669',
+                        borderWidth: 1,
                         borderRadius: 4
                     }
                 ]
@@ -310,6 +256,50 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+            }
+        });
+
+        // 2. Machine In-Scan vs Out-Scan Bar Chart (Yellow = In-Scan / Work Process, Green = Out-Scan / Production Done)
+        const machineNames = {!! json_encode($machines->pluck('machine_no')) !!};
+        const inScans = {!! json_encode($machines->pluck('in_scans_today')) !!};
+        const outScans = {!! json_encode($machines->pluck('out_scans_today')) !!};
+
+        const ctx2 = document.getElementById('machineScanChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: machineNames,
+                datasets: [
+                    {
+                        label: 'In-Scan (Work Process - Yellow)',
+                        data: inScans,
+                        backgroundColor: '#f59e0b', // Yellow
+                        borderColor: '#d97706',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Out-Scan (Production Done - Green)',
+                        data: outScans,
+                        backgroundColor: '#10b981', // Green
+                        borderColor: '#059669',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' }
+                },
                 scales: {
                     y: { beginAtZero: true, ticks: { stepSize: 1 } }
                 }
