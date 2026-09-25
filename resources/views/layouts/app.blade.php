@@ -410,6 +410,11 @@
                         <i class="bi bi-layers-fill"></i> Production Bundles
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('app-test.*') ? 'active' : '' }}" href="{{ route('app-test.index') }}">
+                        <i class="bi bi-tablet-landscape"></i> App Test (Catalog)
+                    </a>
+                </li>
             </ul>
 
             <!-- 1. ORDER & PLANNING -->

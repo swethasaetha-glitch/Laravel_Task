@@ -11,6 +11,7 @@ use App\Http\Controllers\LaySlipController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\ProductionPlanController;
+use App\Http\Controllers\TrackTechAppController;
 use Illuminate\Support\Facades\Route;
 
 // Guest Routes (Login & Sign Up)
@@ -31,6 +32,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/app-test', [TrackTechAppController::class, 'index'])->name('app-test.index');
 
     // Stage 1 & 2: Buyer Orders & Sales Orders (ERP Entry)
     Route::get('/buyer-orders', [OrderController::class, 'buyerOrders'])->name('buyer-orders.index');

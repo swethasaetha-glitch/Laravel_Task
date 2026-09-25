@@ -16,6 +16,7 @@ use App\Models\FabricInspection;
 use App\Models\FabricRelaxation;
 use App\Models\LaySlip;
 use App\Models\ProductionBundle;
+use App\Models\TrackTechApp;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -162,21 +163,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $roll2 = FabricRoll::updateOrCreate(
-            ['roll_no' => 'R-GRN-2026-001-02'],
-            [
-                'fabric_grn_id' => $fabricGrn->id,
-                'fabric_id' => $fab1->id,
-                'gross_weight' => 416.60,
-                'net_weight' => 408.20,
-                'width' => 72.00,
-                'shade' => 'Shade A',
-                'bin_location' => 'BIN-A13',
-                'inspection_status' => 'Passed',
-                'relaxation_status' => 'Relaxed',
-            ]
-        );
-
         // 7. Fabric 4-Point Inspection & Relaxation
         FabricInspection::updateOrCreate(
             ['inspection_no' => 'INSP-2026-001'],
@@ -265,5 +251,48 @@ class DatabaseSeeder extends Seeder
                 'status' => 'Active',
             ]
         );
+
+        // 11. Track Tech Solution 24 App Modules (Matching Screenshot)
+        $appsData = [
+            ['sno' => 1, 'app_name' => 'Critical Operation', 'package_name' => 'criticaloperation', 'live_version' => '1.0.0', 'test_version' => '1.0.0'],
+            ['sno' => 2, 'app_name' => 'Layman', 'package_name' => 'layman', 'live_version' => '2.0.1', 'test_version' => '2.0.2', 'route_name' => 'lay-slips.index'],
+            ['sno' => 3, 'app_name' => 'Sewing', 'package_name' => 'sewing', 'live_version' => '2.1.4', 'test_version' => '2.1.4', 'route_name' => 'production.sewing'],
+            ['sno' => 4, 'app_name' => 'Cutman', 'package_name' => 'cutman', 'live_version' => '2.0.1', 'test_version' => '2.0.2', 'route_name' => 'production.cutting'],
+            ['sno' => 5, 'app_name' => 'Cutting Inspection', 'package_name' => 'cuttinginspection', 'live_version' => '2.0.1', 'test_version' => '2.0.2'],
+            ['sno' => 6, 'app_name' => 'Fabric Reserve', 'package_name' => 'fabricreserve', 'live_version' => '2.0.1', 'test_version' => '2.0.1'],
+            ['sno' => 7, 'app_name' => 'Fabric Store', 'package_name' => 'fabricstore', 'live_version' => '1.0.0', 'test_version' => '1.0.0', 'route_name' => 'fabrics.index'],
+            ['sno' => 8, 'app_name' => 'Mobile Dashboard', 'package_name' => 'mobiledashboard', 'live_version' => '2.0.1', 'test_version' => '2.0.1', 'route_name' => 'dashboard'],
+            ['sno' => 9, 'app_name' => 'Operation', 'package_name' => 'operation', 'live_version' => '2.0.1', 'test_version' => '2.0.1'],
+            ['sno' => 10, 'app_name' => 'Panel Inspection', 'package_name' => 'panelinspection', 'live_version' => '2.0.1', 'test_version' => '2.0.1'],
+            ['sno' => 11, 'app_name' => 'Panel Recutting', 'package_name' => 'panelrecutting', 'live_version' => '2.0.1', 'test_version' => '2.0.1'],
+            ['sno' => 12, 'app_name' => 'TV Dashboard', 'package_name' => 'tvdashboard', 'live_version' => '2.0.1', 'test_version' => '1.0.1'],
+            ['sno' => 13, 'app_name' => 'QR Status', 'package_name' => 'qrstatus', 'live_version' => '2.0.1', 'test_version' => '2.0.1'],
+            ['sno' => 14, 'app_name' => 'Super Market', 'package_name' => 'supermarket', 'live_version' => '2.0.2', 'test_version' => '2.0.4'],
+            ['sno' => 15, 'app_name' => 'Roving Qc', 'package_name' => 'rovingqc', 'live_version' => '2.0.1', 'test_version' => '2.0.1', 'route_name' => 'production.quality'],
+            ['sno' => 16, 'app_name' => 'Number Bundling', 'package_name' => 'numberingbundling', 'live_version' => '2.0.1', 'test_version' => '2.0.1', 'route_name' => 'production.bundles'],
+            ['sno' => 17, 'app_name' => 'Packing', 'package_name' => 'packing', 'live_version' => '2.0.1', 'test_version' => '2.0.1', 'route_name' => 'production.packing'],
+            ['sno' => 18, 'app_name' => 'Unit Transfer', 'package_name' => 'unittransfer', 'live_version' => '2.0.1', 'test_version' => '2.0.1'],
+            ['sno' => 19, 'app_name' => 'Spotwash', 'package_name' => 'spotwash', 'live_version' => '2.0.1', 'test_version' => '2.0.1'],
+            ['sno' => 20, 'app_name' => 'Operator Production', 'package_name' => 'operatorprodcution', 'live_version' => '2.0.1', 'test_version' => '2.0.1'],
+            ['sno' => 21, 'app_name' => 'Special Process', 'package_name' => 'specialprocess', 'live_version' => '2.0.1', 'test_version' => '2.0.1'],
+            ['sno' => 22, 'app_name' => 'Consolidate Dashbored', 'package_name' => 'consolidateddashbored', 'live_version' => '2.0.1', 'test_version' => '2.0.1'],
+            ['sno' => 23, 'app_name' => 'Manual Reject Recutting', 'package_name' => 'manualrejectrecutting', 'live_version' => '1.0.0', 'test_version' => '1.0.0'],
+            ['sno' => 24, 'app_name' => 'Fabric Inspection', 'package_name' => 'fabricinspection', 'live_version' => '1.0.0', 'test_version' => '1.0.0', 'route_name' => 'fabric-inspections.index'],
+        ];
+
+        foreach ($appsData as $app) {
+            TrackTechApp::updateOrCreate(
+                ['sno' => $app['sno']],
+                [
+                    'app_name' => $app['app_name'],
+                    'package_name' => $app['package_name'],
+                    'live_version' => $app['live_version'],
+                    'test_version' => $app['test_version'],
+                    'category' => 'Track Tech Module',
+                    'route_name' => $app['route_name'] ?? null,
+                    'status' => 'ONLINE',
+                ]
+            );
+        }
     }
 }
