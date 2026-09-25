@@ -410,12 +410,8 @@
                         <i class="bi bi-layers-fill"></i> Production Bundles
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('masters.*') ? 'active' : '' }}" href="{{ route('masters.index') }}">
-                        <i class="bi bi-sliders"></i> Garment Masters
-                    </a>
-                </li>
             </ul>
+
 
 
             <!-- 1. ORDER & PLANNING -->
