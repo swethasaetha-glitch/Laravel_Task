@@ -112,6 +112,25 @@ class MasterAndCutPlanTest extends TestCase
         $response->assertRedirect(route('production.cutting'));
         $this->assertDatabaseHas('cut_plans', ['no_of_piles' => 150]);
     }
+
+    public function test_user_can_record_sewing_qc_scan()
+    {
+        $user = User::first();
+        $bundle = \App\Models\LotBundle::first();
+
+        $response = $this->actingAs($user)->get(route('production.sewing'));
+        $response->assertStatus(200);
+        $response->assertSee('Record Sewing QC Inspection');
+
+        $response = $this->actingAs($user)->post(route('production.sewing.store'), [
+            'lot_bundle_id' => $bundle->id,
+            'scan_stage' => 'mid_line',
+            'inspection_result' => 'pass',
+            'remarks' => 'Seam inspection passed on line 1.',
+        ]);
+
+        $response->assertRedirect(route('production.sewing'));
+        $this->assertDatabaseHas('sewing_machine_scans', ['scan_type' => 'mid_scan']);
+        $this->assertDatabaseHas('lot_bundles', ['id' => $bundle->id, 'stage' => 'mid_line']);
+    }
 }
-
-

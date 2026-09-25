@@ -11,6 +11,9 @@ use App\Models\Operator;
 use App\Models\Supervisor;
 use App\Models\SalesOrder;
 use App\Models\Fabric;
+use App\Models\SewingMachineScan;
+use App\Models\GarmentDefect;
+use App\Models\QualityDashboardAudit;
 use Illuminate\Http\Request;
 
 class ProductionController extends Controller
@@ -123,7 +126,7 @@ class ProductionController extends Controller
             'operator_id' => 'nullable|exists:operators,id',
             'supervisor_id' => 'nullable|exists:supervisors,id',
             'table_no' => 'required|string',
-            'cutting_method' => 'required|string', // Straight Knife, Band Knife, Gerber Auto Cutter, Manual
+            'cutting_method' => 'required|string',
             'no_of_piles' => 'required|integer|min:1',
             'extra_qty' => 'required|integer|min:0',
         ]);
@@ -146,7 +149,6 @@ class ProductionController extends Controller
             'status' => 'in_cutting',
         ]);
 
-        // Generate Lot Bundles with QR codes for Cutting Floor
         foreach (['S', 'M', 'L', 'XL'] as $size) {
             $bundleNo = 'BND-' . $cutPlan->cut_plan_no . '-' . $size;
             LotBundle::create([
@@ -169,7 +171,82 @@ class ProductionController extends Controller
 
     public function sewing()
     {
-        return view('production.sewing');
+        $lotBundles = LotBundle::with('cutPlan', 'style', 'operator', 'supervisor', 'machine', 'scans')->latest()->get();
+        $scans = SewingMachineScan::with('lotBundle', 'machine', 'operator')->latest()->get();
+        $sewingMachines = Machine::where('department', 'Sewing')->get();
+        $operators = Operator::where('department', 'Sewing')->orWhereNull('department')->get();
+        $supervisors = Supervisor::where('department', 'Sewing')->orWhereNull('department')->get();
+        $defects = GarmentDefect::all();
+
+        $sewInCount = LotBundle::whereIn('stage', ['sew_in', 'mid_line', 'sew_out', 'washing_laundry', 'finishing'])->count();
+        $midLineCount = LotBundle::whereIn('stage', ['mid_line', 'sew_out', 'washing_laundry', 'finishing'])->count();
+        $endLineCount = LotBundle::whereIn('stage', ['sew_out', 'washing_laundry', 'finishing'])->count();
+
+        return view('production.sewing', compact(
+            'lotBundles',
+            'scans',
+            'sewingMachines',
+            'operators',
+            'supervisors',
+            'defects',
+            'sewInCount',
+            'midLineCount',
+            'endLineCount'
+        ));
+    }
+
+    public function storeSewingScan(Request $request)
+    {
+        $validated = $request->validate([
+            'lot_bundle_id' => 'required|exists:lot_bundles,id',
+            'scan_stage' => 'required|in:in_line,mid_line,end_line',
+            'machine_id' => 'nullable|exists:machines,id',
+            'operator_id' => 'nullable|exists:operators,id',
+            'inspection_result' => 'required|in:pass,rework,reject',
+            'garment_defect_id' => 'nullable|exists:garment_defects,id',
+            'remarks' => 'nullable|string',
+        ]);
+
+        $bundle = LotBundle::findOrFail($validated['lot_bundle_id']);
+
+        $scanType = match($validated['scan_stage']) {
+            'in_line' => 'in_scan',
+            'mid_line' => 'mid_scan',
+            'end_line' => 'out_scan',
+        };
+
+        // Record scan log
+        SewingMachineScan::create([
+            'lot_bundle_id' => $bundle->id,
+            'machine_id' => $validated['machine_id'] ?? null,
+            'operator_id' => $validated['operator_id'] ?? null,
+            'department' => 'Sewing',
+            'scan_type' => $scanType,
+            'scanned_at' => now(),
+        ]);
+
+        // Update bundle stage
+        $newStage = match($validated['scan_stage']) {
+            'in_line' => 'sew_in',
+            'mid_line' => 'mid_line',
+            'end_line' => 'sew_out',
+        };
+        $bundle->update(['stage' => $newStage]);
+
+        // Record quality audit log
+        QualityDashboardAudit::create([
+            'lot_bundle_id' => $bundle->id,
+            'garment_defect_id' => $validated['garment_defect_id'] ?? null,
+            'operator_id' => $validated['operator_id'] ?? null,
+            'machine_id' => $validated['machine_id'] ?? null,
+            'department' => 'Sewing (' . strtoupper($validated['scan_stage']) . ')',
+            'defect_count' => $validated['inspection_result'] === 'pass' ? 0 : 1,
+            'audit_result' => $validated['inspection_result'],
+            'remarks' => $validated['remarks'] ?? 'Recorded via Sewing QC Terminal',
+        ]);
+
+        return redirect()->route('production.sewing')
+            ->with('success', 'Sewing ' . strtoupper(str_replace('_', ' ', $validated['scan_stage'])) . ' recorded successfully for ' . $bundle->bundle_no);
     }
 
     public function quality()

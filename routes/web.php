@@ -75,8 +75,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/production/cutting', [ProductionController::class, 'cutting'])->name('production.cutting');
     Route::post('/production/cutting', [ProductionController::class, 'storeCutOrder'])->name('production.cutting.store');
     Route::get('/production/sewing', [ProductionController::class, 'sewing'])->name('production.sewing');
+    Route::post('/production/sewing', [ProductionController::class, 'storeSewingScan'])->name('production.sewing.store');
     Route::get('/production/quality', [ProductionController::class, 'quality'])->name('production.quality');
     Route::get('/production/packing', [ProductionController::class, 'packing'])->name('production.packing');
+
 
 
     // Garment Masters & Process Sequences
