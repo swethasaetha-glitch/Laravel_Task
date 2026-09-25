@@ -97,12 +97,12 @@
         }
 
         .sidebar-section-title {
-            font-size: 0.68rem;
+            font-size: 0.65rem;
             font-weight: 800;
             color: #475569;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            padding: 1.25rem 0.75rem 0.5rem;
+            padding: 1.1rem 0.75rem 0.4rem;
         }
 
         .sidebar .nav-item {
@@ -112,17 +112,17 @@
         .sidebar .nav-link {
             color: #94a3b8;
             font-weight: 600;
-            font-size: 0.9rem;
-            padding: 0.7rem 1rem;
+            font-size: 0.86rem;
+            padding: 0.65rem 0.9rem;
             border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             transition: all 0.15s ease-in-out;
         }
 
         .sidebar .nav-link i {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
         }
 
         .sidebar .nav-link:hover {
@@ -410,9 +410,54 @@
                         <i class="bi bi-layers-fill"></i> Production Bundles
                     </a>
                 </li>
+            </ul>
+
+            <!-- 1. ORDER & PLANNING -->
+            <div class="sidebar-section-title">1. Order & Planning</div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('buyer-orders.*') ? 'active' : '' }}" href="{{ route('buyer-orders.index') }}">
+                        <i class="bi bi-cart-check"></i> Buyer Orders (PO)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('sales-orders.*') ? 'active' : '' }}" href="{{ route('sales-orders.index') }}">
+                        <i class="bi bi-receipt"></i> Sales Orders (ERP)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('production-plans.*') ? 'active' : '' }}" href="{{ route('production-plans.index') }}">
+                        <i class="bi bi-calendar-event"></i> Production Planning
+                    </a>
+                </li>
+            </ul>
+
+            <!-- 2. FABRIC ERP & STORE -->
+            <div class="sidebar-section-title">2. Fabric ERP & Store</div>
+            <ul class="nav flex-column">
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('fabrics.*') ? 'active' : '' }}" href="{{ route('fabrics.index') }}">
-                        <i class="bi bi-aspect-ratio"></i> Fabrics
+                        <i class="bi bi-aspect-ratio"></i> Fabric Master
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('fabric-pos.*') ? 'active' : '' }}" href="{{ route('fabric-pos.index') }}">
+                        <i class="bi bi-bag-plus"></i> Fabric Procurement
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('fabric-grns.*') ? 'active' : '' }}" href="{{ route('fabric-grns.index') }}">
+                        <i class="bi bi-box-arrow-in-down"></i> Receiving & GRN
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('fabric-inspections.*') ? 'active' : '' }}" href="{{ route('fabric-inspections.index') }}">
+                        <i class="bi bi-patch-check"></i> 4-Point Inspection
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('fabric-relaxations.*') ? 'active' : '' }}" href="{{ route('fabric-relaxations.index') }}">
+                        <i class="bi bi-clock-history"></i> Fabric Relaxation
                     </a>
                 </li>
                 <li class="nav-item">
@@ -420,15 +465,25 @@
                         <i class="bi bi-collection-fill"></i> Fabric Groups
                     </a>
                 </li>
+            </ul>
+
+            <!-- 3. CUT ROOM & LAY -->
+            <div class="sidebar-section-title">3. Cut Room & Lay</div>
+            <ul class="nav flex-column">
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('lay-models.*') ? 'active' : '' }}" href="{{ route('lay-models.index') }}">
                         <i class="bi bi-bounding-box"></i> Lay Models
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('lay-slips.*') ? 'active' : '' }}" href="{{ route('lay-slips.index') }}">
+                        <i class="bi bi-grid-3x3-gap"></i> Lay Slips (Completed)
+                    </a>
+                </li>
             </ul>
 
-            <!-- PRODUCTION -->
-            <div class="sidebar-section-title">Production</div>
+            <!-- 4. PRODUCTION SECTIONS -->
+            <div class="sidebar-section-title">4. Production Sections</div>
             <ul class="nav flex-column mb-3">
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('production.cutting') ? 'active' : '' }}" href="{{ route('production.cutting') }}">
